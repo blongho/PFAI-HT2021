@@ -18,7 +18,7 @@ def main():
     mc.pretty_print()
     goal_node = sa.bfs()
     print('goal state: ')
-    goal_node.state.pretty_print()
+    goal_node.state.pretty_print_solution()
 
 if __name__ == "__main__":
     main()
