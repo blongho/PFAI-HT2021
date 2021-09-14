@@ -1,8 +1,8 @@
-"""
+'''
 Missionaries and Cannibal problem
 
-Author: Tony Lindgren, Bernard Longho, Mbah Godwin
-"""
+Author: Tony Lindgren
+'''
 from copy import deepcopy
 
 
@@ -46,7 +46,9 @@ class MissionariesAndCannibals:
         boat = self.state[1]
         right_bank = self.state[2]
         if boat == 'r':
-            if (right_bank[0] - 2 == 0 or right_bank[0] - 2 >= right_bank[1]) and right_bank[0] >= 2 and left_bank[0] + 2 >= left_bank[1]:
+            if (right_bank[0] - 2 == 0 or right_bank[0] - 2 >= right_bank[1]) \
+                    and right_bank[0] >= 2 and left_bank[0] + 2 >= left_bank[1]:
+
                 right_bank[0] = right_bank[0] - 2
                 boat = 'l'
                 left_bank[0] = left_bank[0] + 2
@@ -54,7 +56,8 @@ class MissionariesAndCannibals:
                 self.state = [left_bank, boat, right_bank]
                 return True
         else:
-            if (left_bank[0] - 2 == 0 or left_bank[0] - 2 >= left_bank[1]) and left_bank[0] >= 2 and right_bank[0] + 2 >= right_bank[1]:
+            if (left_bank[0] - 2 == 0 or left_bank[0] - 2 >= left_bank[1]) \
+                    and left_bank[0] >= 2 and right_bank[0] + 2 >= right_bank[1]:
                 left_bank[0] = left_bank[0] - 2
                 boat = 'r'
                 right_bank[0] = right_bank[0] + 2
@@ -83,29 +86,46 @@ class MissionariesAndCannibals:
                 self.state = [left_bank, boat, right_bank]
                 return True
 
-    def mc(self):  # missionary and cannibal on the boat
+    def m(self):
         left_bank = self.state[0]
         boat = self.state[1]
         right_bank = self.state[2]
         if boat == 'r':
-            if right_bank[0] == right_bank[1]:
-                right_bank[1] = right_bank[1] - 1
-                right_bank[0] = right_bank[0] + 1
+            if (right_bank[0] - 1 == 0 or right_bank[0] - 1 >= right_bank[1]) \
+                    and right_bank[0] >= 1 and left_bank[0] + 1 >= left_bank[1]:
+                right_bank[0] = right_bank[0] - 1
                 boat = 'l'
-                left_bank[0] = left_bank[0] - 1
-                left_bank[1] = left_bank[1] + 1
-
+                left_bank[0] = left_bank[0] + 1
                 # update our state
                 self.state = [left_bank, boat, right_bank]
                 return True
         else:
-            if left_bank[0] == left_bank[1]:
-                left_bank[1] = left_bank[1] + 1
+            if (left_bank[0] - 1 == 0 or left_bank[0] - 1 >= left_bank[1]) \
+                    and left_bank[0] >= 1 and right_bank[0] + 1 >= right_bank[1]:
                 left_bank[0] = left_bank[0] - 1
                 boat = 'r'
                 right_bank[0] = right_bank[0] + 1
-                right_bank[1] = right_bank[1] - 1
+                # update our state
+                self.state = [left_bank, boat, right_bank]
+                return True
 
+    def mc(self):
+        left_bank = self.state[0]
+        boat = self.state[1]
+        right_bank = self.state[2]
+        if boat == 'r':
+            if right_bank[0] - 1 >= right_bank[1] or right_bank[0] == 0:
+                right_bank[0] = right_bank[0] - 1
+                boat = 'l'
+                left_bank[0] = left_bank[0] + 1
+                # update our state
+                self.state = [left_bank, boat, right_bank]
+                return True
+        else:
+            if left_bank[0] + 1 >= left_bank[1]:
+                left_bank[0] = left_bank[0] + 1
+                boat = 'r'
+                right_bank[0] = right_bank[0] - 1
                 # update our state
                 self.state = [left_bank, boat, right_bank]
                 return True
@@ -115,7 +135,7 @@ class MissionariesAndCannibals:
         boat = self.state[1]
         right_bank = self.state[2]
         if boat == 'r':
-            if left_bank[0] > 2 and right_bank[0] == 0:
+            if (left_bank[0] == 0 or left_bank[0] >= left_bank[1] + 1) and right_bank[1] >= 1:
                 right_bank[1] = right_bank[1] - 1
                 boat = 'l'
                 left_bank[1] = left_bank[1] + 1
@@ -123,33 +143,10 @@ class MissionariesAndCannibals:
                 self.state = [left_bank, boat, right_bank]
                 return True
         else:
-            if (right_bank[0] == 0 or right_bank[0] < right_bank[1] + 1) and left_bank[1] >= 1:
+            if (right_bank[0] == 0 or right_bank[0] >= right_bank[1] + 1) and left_bank[1] >= 1:
                 left_bank[1] = left_bank[1] - 1
                 boat = 'r'
-                right_bank[1] = right_bank[1] - 1
-                # update our state
-                self.state = [left_bank, boat, right_bank]
-                return True
-
-    def m(self):
-        left_bank = self.state[0]
-        boat = self.state[1]
-        right_bank = self.state[2]
-        if boat == 'r':
-            if (right_bank[0] - 1 == 0 or right_bank[0] - 1 >= right_bank[1]) and right_bank[0] >= 1 and left_bank[
-                0] + 1 >= left_bank[1]:
-                right_bank[0] = right_bank[0] - 1
-                boat = 'l'
-                left_bank[0] = left_bank[0] + 1
-                # update our state
-                self.state = [left_bank, boat, right_bank]
-                return True
-        else:
-            if (left_bank[0] - 1 == 0 or left_bank[0] - 1 >= left_bank[1]) and left_bank[0] >= 1 and right_bank[
-                0] + 1 >= right_bank[1]:
-                left_bank[0] = left_bank[0] - 1
-                boat = 'r'
-                right_bank[0] = right_bank[0] + 1
+                right_bank[1] = right_bank[1] + 1
                 # update our state
                 self.state = [left_bank, boat, right_bank]
                 return True
