@@ -1,7 +1,7 @@
 """
 Define nodes of search tree and vanilla bfs search algorithm
 
-__author__: Tony Lindgren, Longho Bernard Che, Mbah Edwin
+__author__: Tony Lindgren, Longho Bernard Che, Mba Godwin
 """
 import queue
 
