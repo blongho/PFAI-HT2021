@@ -58,9 +58,9 @@ class Node:
                 print(" #miss on left bank: ", action[1][0][0])
                 print(" #cann on left bank: ", action[1][0][1])
                 print("            boat is: ", action[1][1])
-                print(" #miss on right bank: ", action[1][2][0])
-                print(" #cann on right bank: ", action[1][2][1])
-                print(" ----------------------------")
+                print("#miss on right bank: ", action[1][2][0])
+                print("#cann on right bank: ", action[1][2][1])
+                print("----------------------------")
 
 
 class SearchAlgorithm:
