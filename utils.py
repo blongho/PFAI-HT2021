@@ -35,13 +35,13 @@ class RunningStats:
         Returns:
             str: string representation of this class
         """
-        return "\n--------------------------------\n"\
-               f"Statistics for {self.algorithm}\n"\
+        return "\n--------------------------------\n" \
+               f"Statistics for {self.algorithm}\n" \
                f"Elapsed time (s): {self.duration}\n" \
                f"Solution found at depth: {self.depth}\n" \
                f"Number of nodes explored: {self.nodes}\n" \
                f"Cost of solution: {self.cost}\n" \
-               f"Estimated effective branching factor: {self.branching_factor}\n"\
+               f"Estimated effective branching factor: {self.branching_factor}\n" \
                "--------------------------------\n"
 
     def save_to_file(self, filename: str) -> None:
