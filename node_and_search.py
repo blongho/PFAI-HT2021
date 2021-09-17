@@ -101,7 +101,6 @@ class SearchAlgorithm:
                 explored.append(curr_state)
                 successor = curr_node.successor()
                 while not successor.empty():
-                    # if successor.get() not in reached.items():
                     frontier.put(successor.get())
 
     def statistics(self):
