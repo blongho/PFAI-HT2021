@@ -4,6 +4,9 @@ Define nodes of search tree and vanilla bfs search algorithm
 __author__: Tony Lindgren, Longho Bernard Che, Mba Godwin
 """
 import queue
+import time
+
+from utils import RunningStats
 
 
 class Node:
@@ -21,10 +24,11 @@ class Node:
         if parent:
             self.depth = parent.depth + 1
 
-        self.action_state_map = dict()
-
     def goal_state(self):
         return self.state.check_goal()
+
+    def get_state(self):
+        return self.state
 
     def successor(self):
         successors = queue.Queue()
@@ -43,7 +47,7 @@ class Node:
         while node:
             path.append(node)
             node = node.parent
-        return [[node.action, node.state.state] for node in list(reversed(path))[1:]]
+        return [[node.action, node.state.state] for node in path[::-1][1:]]
 
     def pretty_print_solution(self, verbose=False):
         """
@@ -70,23 +74,44 @@ class SearchAlgorithm:
 
     def __init__(self, problem):
         self.start = Node(problem)
-        self.reached = {}  # A dictionary to hold the node and state
+        self.running_stats = None
 
-    def bfs(self):
+    def bfs(self, statistics=False):
+        if statistics:
+            start_time = time.process_time()
         frontier = queue.Queue()
         frontier.put(self.start)
+        explored = []
         stop = False
         while not stop:
             if frontier.empty():
                 return None
             curr_node = frontier.get()
-            if curr_node not in self.reached:
-                self.reached[curr_node.action] = curr_node
             if curr_node.goal_state():
                 stop = True
+                if statistics:
+                    stop_time = time.process_time()
+                    cpu_time = stop_time - start_time
+                    self.running_stats = RunningStats(algorithm="bfs", duration=cpu_time, depth=curr_node.depth,
+                                                      nodes=len(explored), cost=curr_node.cost)
                 return curr_node
 
-            successor = curr_node.successor()
-            while not successor.empty():
-                # if successor.get() not in reached.items():
-                frontier.put(successor.get())
+            curr_state = curr_node.get_state()
+            if curr_state not in explored:
+                explored.append(curr_state)
+                successor = curr_node.successor()
+                while not successor.empty():
+                    # if successor.get() not in reached.items():
+                    frontier.put(successor.get())
+
+    def statistics(self):
+        """
+        Informs the user about
+        - depth, d
+        - search cost (number of nodes generated)
+        - cost of solution (# of nodes from root to goal, N)
+        - cpu time
+        - effective branching factor (N^(1/d))
+        """
+        if self.running_stats is not None:
+            print(self.running_stats)
