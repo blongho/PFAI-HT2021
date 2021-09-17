@@ -72,13 +72,13 @@ class SearchAlgorithm:
     Class for search algorithms, call it with a defined problem
     """
 
-    def __init__(self, problem):
+    def __init__(self, problem, check_visited=False):
         self.start = Node(problem)
         self.running_stats = None
+        self.check_visited_nodes =check_visited
 
     def bfs(self, statistics=False):
-        if statistics:
-            start_time = time.process_time()
+        start_time = time.process_time()
         frontier = queue.Queue()
         frontier.put(self.start)
         explored = []
@@ -92,13 +92,52 @@ class SearchAlgorithm:
                 if statistics:
                     stop_time = time.process_time()
                     cpu_time = stop_time - start_time
+                    nodes_explored = len(explored) if self.check_visited_nodes else frontier.qsize()
                     self.running_stats = RunningStats(algorithm="bfs", duration=cpu_time, depth=curr_node.depth,
-                                                      nodes=len(explored), cost=curr_node.cost)
+                                                      nodes=nodes_explored, cost=curr_node.cost)
                 return curr_node
 
-            curr_state = curr_node.get_state()
-            if curr_state not in explored:
-                explored.append(curr_state)
+            if self.check_visited_nodes:
+                curr_state = curr_node.get_state()
+                if curr_state not in explored:
+                    explored.append(curr_state)
+                    successor = curr_node.successor()
+                    while not successor.empty():
+                        frontier.put(successor.get())
+            else:
+                successor = curr_node.successor()
+                while not successor.empty():
+                    frontier.put(successor.get())
+
+
+    def dfs(self, statistics=False):
+        start_time = time.process_time()
+        frontier = queue.LifoQueue()
+        frontier.put(self.start)
+        explored = []
+        stop = False
+        while not stop:
+            if frontier.empty():
+                return None
+            curr_node = frontier.get()
+            if curr_node.goal_state():
+                stop = True
+                if statistics:
+                    stop_time = time.process_time()
+                    cpu_time = stop_time - start_time
+                    nodes_explored = len(explored) if self.check_visited_nodes else frontier.qsize()
+                    self.running_stats = RunningStats(algorithm="bfs", duration=cpu_time, depth=curr_node.depth,
+                                                      nodes=nodes_explored, cost=curr_node.cost)
+                return curr_node
+
+            if self.check_visited_nodes:
+                curr_state = curr_node.get_state()
+                if curr_state not in explored:
+                    explored.append(curr_state)
+                    successor = curr_node.successor()
+                    while not successor.empty():
+                        frontier.put(successor.get())
+            else:
                 successor = curr_node.successor()
                 while not successor.empty():
                     frontier.put(successor.get())
