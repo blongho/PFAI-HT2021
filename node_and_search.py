@@ -27,8 +27,18 @@ class Node:
     def goal_state(self):
         return self.state.check_goal()
 
-    def successor(self):
-        successors = queue.Queue()
+    def successor(self, queue_type=queue.Queue()):
+        """
+        All the child nodes from a current node
+        Parameters
+        ----------
+        queue_type the type of queue to be used [fifo|lifo]
+
+        Returns a queue containing the nodes that are children to the current node
+        -------
+
+        """
+        successors = queue_type
         for action in self.state.action:
             child = self.state.move(action)
             if child is not None:
@@ -78,7 +88,7 @@ class SearchAlgorithm:
         self.check_explored_nodes = check_visited_nodes
 
     def bfs(self, statistics=False):
-        start_time = time.process_time()
+        start_time = time.process_time() if statistics else None
         frontier = queue.Queue()
         frontier.put(self.start)
         explored = []
@@ -100,6 +110,47 @@ class SearchAlgorithm:
                 return curr_node
 
             successor = curr_node.successor()
+            while not successor.empty():
+                child_node = successor.get()
+                if self.check_explored_nodes:
+                    if child_node not in explored:
+                        frontier.put(child_node)
+                else:
+                    frontier.put(child_node)
+
+    def dfs(self, statistics=False):
+        """
+        Death first search algorithm
+        Parameters
+        ----------
+        statistics enables/disables the ability to print the statistics when the solution is complete
+
+        Returns the node that defines the goal state or none
+        -------
+
+        """
+        start_time = time.process_time() if statistics else None
+        frontier = queue.LifoQueue()
+        frontier.put(self.start)
+        explored = []
+        stop = False
+        while not stop:
+            if frontier.empty():
+                return None
+            curr_node = frontier.get()
+            if self.check_explored_nodes:
+                explored.append(curr_node)
+            if curr_node.goal_state():
+                stop = True
+                if statistics:
+                    stop_time = time.process_time()
+                    cpu_time = stop_time - start_time
+                    nodes_explored = len(explored) if self.check_explored_nodes else frontier.qsize()
+                    self.running_stats = RunningStats(search="dfs", duration=cpu_time, depth=curr_node.depth,
+                                                      nodes=nodes_explored, cost=curr_node.cost)
+                return curr_node
+
+            successor = curr_node.successor(queue_type=queue.LifoQueue())
             while not successor.empty():
                 child_node = successor.get()
                 if self.check_explored_nodes:
