@@ -13,7 +13,7 @@ goal_state = [[3, 3], 'l', [0, 0]]
 
 def main():
     mc = MissionariesAndCannibals(init_state, goal_state)
-    sa = SearchAlgorithm(mc)
+    sa = SearchAlgorithm(mc, check_visited_nodes=False)
     print('BFS')
     print('Start state: ')
     mc.pretty_print()

@@ -9,7 +9,7 @@ class RunningStats:
     A class to hold the running statistics
     """
 
-    def __init__(self, algorithm: str, duration: float, depth: int, nodes: int, cost: int) -> None:
+    def __init__(self, search: str, duration: float, depth: int, nodes: int, cost: int) -> None:
         """Initialized the running statistics
 
         Args:
@@ -18,7 +18,7 @@ class RunningStats:
             nodes (int): the number of nodes generated 
             cost (int): the number of nodes in path until a solution is reached 
         """
-        self.algorithm = algorithm
+        self.algorithm = search
         self.duration = duration
         self.depth = depth
         self.nodes = nodes
@@ -36,7 +36,6 @@ class RunningStats:
             str: string representation of this class
         """
         return "\n--------------------------------\n" \
-               f"Statistics for {self.algorithm}\n" \
                f"Elapsed time (s): {self.duration}\n" \
                f"Solution found at depth: {self.depth}\n" \
                f"Number of nodes explored: {self.nodes}\n" \

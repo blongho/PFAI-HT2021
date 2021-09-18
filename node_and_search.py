@@ -27,9 +27,6 @@ class Node:
     def goal_state(self):
         return self.state.check_goal()
 
-    def get_state(self):
-        return self.state
-
     def successor(self):
         successors = queue.Queue()
         for action in self.state.action:
@@ -66,16 +63,19 @@ class Node:
                 print("#cann on right bank: ", action[1][2][1])
                 print("----------------------------")
 
+    def __str__(self) -> str:
+        return "Node[state={}, cost={}, action={}, parent={}".format(self.state, self.cost, self.action, self.parent)
+
 
 class SearchAlgorithm:
     """
     Class for search algorithms, call it with a defined problem
     """
 
-    def __init__(self, problem, check_visited=False):
+    def __init__(self, problem, check_visited_nodes=False):
         self.start = Node(problem)
         self.running_stats = None
-        self.check_visited_nodes =check_visited
+        self.check_explored_nodes = check_visited_nodes
 
     def bfs(self, statistics=False):
         start_time = time.process_time()
@@ -87,69 +87,32 @@ class SearchAlgorithm:
             if frontier.empty():
                 return None
             curr_node = frontier.get()
+            if self.check_explored_nodes:
+                explored.append(curr_node)
             if curr_node.goal_state():
                 stop = True
                 if statistics:
                     stop_time = time.process_time()
                     cpu_time = stop_time - start_time
-                    nodes_explored = len(explored) if self.check_visited_nodes else frontier.qsize()
-                    self.running_stats = RunningStats(algorithm="bfs", duration=cpu_time, depth=curr_node.depth,
+                    nodes_explored = len(explored) if self.check_explored_nodes else frontier.qsize()
+                    self.running_stats = RunningStats(search="bfs", duration=cpu_time, depth=curr_node.depth,
                                                       nodes=nodes_explored, cost=curr_node.cost)
                 return curr_node
 
-            if self.check_visited_nodes:
-                curr_state = curr_node.get_state()
-                if curr_state not in explored:
-                    explored.append(curr_state)
-                    successor = curr_node.successor()
-                    while not successor.empty():
-                        frontier.put(successor.get())
-            else:
-                successor = curr_node.successor()
-                while not successor.empty():
-                    frontier.put(successor.get())
+            successor = curr_node.successor()
+            while not successor.empty():
+                child_node = successor.get()
+                if self.check_explored_nodes:
+                    if child_node not in explored:
+                        frontier.put(child_node)
+                else:
+                    frontier.put(child_node)
 
-
-    def dfs(self, statistics=False):
-        start_time = time.process_time()
-        frontier = queue.LifoQueue()
-        frontier.put(self.start)
-        explored = []
-        stop = False
-        while not stop:
-            if frontier.empty():
-                return None
-            curr_node = frontier.get()
-            if curr_node.goal_state():
-                stop = True
-                if statistics:
-                    stop_time = time.process_time()
-                    cpu_time = stop_time - start_time
-                    nodes_explored = len(explored) if self.check_visited_nodes else frontier.qsize()
-                    self.running_stats = RunningStats(algorithm="bfs", duration=cpu_time, depth=curr_node.depth,
-                                                      nodes=nodes_explored, cost=curr_node.cost)
-                return curr_node
-
-            if self.check_visited_nodes:
-                curr_state = curr_node.get_state()
-                if curr_state not in explored:
-                    explored.append(curr_state)
-                    successor = curr_node.successor()
-                    while not successor.empty():
-                        frontier.put(successor.get())
-            else:
-                successor = curr_node.successor()
-                while not successor.empty():
-                    frontier.put(successor.get())
-
-    def statistics(self):
+    def statistics(self) -> None:
         """
-        Informs the user about
-        - depth, d
-        - search cost (number of nodes generated)
-        - cost of solution (# of nodes from root to goal, N)
-        - cpu time
-        - effective branching factor (N^(1/d))
+         If statistics printing is enabled, print the statistics. Otherwise, nothing is printed.
         """
         if self.running_stats is not None:
-            print(self.running_stats)
+            print(f"\n{33 * '>'}\n"
+                  f"Statistics for {self.running_stats.algorithm.upper()} with check for explored nodes"
+                  f" {'ENABLED' if self.check_explored_nodes else 'DISABLED'}", self.running_stats)
