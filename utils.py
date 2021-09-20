@@ -60,21 +60,21 @@ def get_configuration(args: list) -> dict():
     for item in args:
         if item.startswith("timer"):
             timing_enabled = item.split("=")[1]
-            arguments["enable_timing"] = timing_enabled
+            arguments["enable_timing"] = bool(timing_enabled)
         if item.startswith("algo"):
             algo = item.split("=")[1]
             arguments["algo"] = algo
         if item.startswith("save_to_file"):
             saving_to_file = item.split("=")[1]
-            arguments["save_to_file"] = saving_to_file
+            arguments["save_to_file"] = bool(saving_to_file)
         if item.startswith("statistics"):
             statistics = item.split("=")[1]
-            arguments["statistics"] = statistics
+            arguments["statistics"] = bool(statistics)
         if item.startswith("check_visited_nodes"):
             visited_check = item.split("=")[1]
-            arguments["check_visited_nodes"] = visited_check
+            arguments["check_visited_nodes"] = bool(visited_check)
         if item.startswith("pretty_print"):
             pretty_print = item.split("=")[1]
-            arguments["pretty_print"] = pretty_print
+            arguments["pretty_print"] = bool(pretty_print)
         
     return arguments

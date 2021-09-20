@@ -91,6 +91,7 @@ class SearchAlgorithm:
         self.check_visited_nodes = check_visited_nodes
 
     def bfs(self, statistics=False):
+        print("Running bfs with statistics enabled? ", statistics)
         start_time = time.process_time() if statistics else None
         frontier = queue.Queue()
         frontier.put(self.start)
@@ -122,9 +123,8 @@ class SearchAlgorithm:
                     frontier.put(child_node)
 
     def dfs(self, statistics=False):
-        visited = {}
-        visited[str(self.start.state.state)] = True
-        start_time = time.process_time()
+        print("Running dfs with statistics enabled? ", statistics)
+        start_time = time.process_time() if statistics else None
         frontier = queue.LifoQueue()
         frontier.put(self.start)
         explored = []
@@ -133,6 +133,7 @@ class SearchAlgorithm:
             if frontier.empty():
                 return None
             curr_node = frontier.get()
+            explored.append(curr_node)
             if curr_node.goal_state():
                 stop = True
                 if statistics:
@@ -143,20 +144,14 @@ class SearchAlgorithm:
                                                       nodes=nodes_explored, cost=curr_node.cost)
                 return curr_node
 
-            if self.check_visited_nodes:
-                curr_state = curr_node.get_state()
-                if curr_state not in explored:
-                    explored.append(curr_state)
-                    successor = curr_node.successor()
-                    while not successor.empty():
-                        frontier.put(successor.get())
-            else:
-                successor = curr_node.successor()
-                while not successor.empty():
-                    node = successor.get()
-                    if str(node.state.state) not in visited.keys():
-                        frontier.put(node)
-                        visited[str(node.state.state)] = True
+            successor = curr_node.successor()
+            while not successor.empty():
+                child_node = successor.get()
+                if self.check_visited_nodes:
+                    if child_node not in explored:
+                        frontier.put(child_node)
+                else:
+                    frontier.put(child_node)
 
     def statistics(self) -> None:
         """

@@ -3,7 +3,8 @@ Define problem and start execution of search problems
 
 Author: Tony Lindgren
 '''
-
+import sys 
+from utils import get_configuration
 from missionaries_and_cannibals import MissionariesAndCannibals
 from node_and_search import SearchAlgorithm
 
@@ -12,12 +13,19 @@ goal_state = [[3, 3], 'l', [0, 0]]
 
 
 def main():
+    config = get_configuration(sys.argv)
+    
     mc = MissionariesAndCannibals(init_state, goal_state)
+
     sa = SearchAlgorithm(mc, check_visited_nodes=True)
-    print('BFS')
+
     print('Start state: ')
     mc.pretty_print()
-    goal_node = sa.bfs(statistics=True)
+    if config.get("algo")== "bfs":
+        goal_node = sa.bfs(statistics=True)
+    else:
+        goal_node = sa.dfs(statistics=True)
+
     goal_node.pretty_print_solution(True)
     print('goal state: ')
     goal_node.state.pretty_print()
