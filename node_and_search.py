@@ -24,6 +24,9 @@ class Node:
         if parent:
             self.depth = parent.depth + 1
 
+    def get_state(self):
+        return self.state
+
     def goal_state(self):
         return self.state.check_goal()
 
@@ -85,7 +88,7 @@ class SearchAlgorithm:
     def __init__(self, problem, check_visited_nodes=False):
         self.start = Node(problem)
         self.running_stats = None
-        self.check_explored_nodes = check_visited_nodes
+        self.check_visited_nodes = check_visited_nodes
 
     def bfs(self, statistics=False):
         start_time = time.process_time() if statistics else None
@@ -97,39 +100,31 @@ class SearchAlgorithm:
             if frontier.empty():
                 return None
             curr_node = frontier.get()
-            if self.check_explored_nodes:
+            if self.check_visited_nodes:
                 explored.append(curr_node)
             if curr_node.goal_state():
                 stop = True
                 if statistics:
                     stop_time = time.process_time()
                     cpu_time = stop_time - start_time
-                    nodes_explored = len(explored) if self.check_explored_nodes else frontier.qsize()
-                    self.running_stats = RunningStats(search="bfs", duration=cpu_time, depth=curr_node.depth,
+                    nodes_explored = len(explored) if self.check_visited_nodes else frontier.qsize()
+                    self.running_stats = RunningStats(algorithm="bfs", duration=cpu_time, depth=curr_node.depth,
                                                       nodes=nodes_explored, cost=curr_node.cost)
                 return curr_node
 
             successor = curr_node.successor()
             while not successor.empty():
                 child_node = successor.get()
-                if self.check_explored_nodes:
+                if self.check_visited_nodes:
                     if child_node not in explored:
                         frontier.put(child_node)
                 else:
                     frontier.put(child_node)
 
     def dfs(self, statistics=False):
-        """
-        Death first search algorithm
-        Parameters
-        ----------
-        statistics enables/disables the ability to print the statistics when the solution is complete
-
-        Returns the node that defines the goal state or none
-        -------
-
-        """
-        start_time = time.process_time() if statistics else None
+        visited = {}
+        visited[str(self.start.state.state)] = True
+        start_time = time.process_time()
         frontier = queue.LifoQueue()
         frontier.put(self.start)
         explored = []
@@ -138,32 +133,37 @@ class SearchAlgorithm:
             if frontier.empty():
                 return None
             curr_node = frontier.get()
-            if self.check_explored_nodes:
-                explored.append(curr_node)
             if curr_node.goal_state():
                 stop = True
                 if statistics:
                     stop_time = time.process_time()
                     cpu_time = stop_time - start_time
-                    nodes_explored = len(explored) if self.check_explored_nodes else frontier.qsize()
-                    self.running_stats = RunningStats(search="dfs", duration=cpu_time, depth=curr_node.depth,
+                    nodes_explored = len(explored) if self.check_visited_nodes else frontier.qsize()
+                    self.running_stats = RunningStats(algorithm="dfs", duration=cpu_time, depth=curr_node.depth,
                                                       nodes=nodes_explored, cost=curr_node.cost)
                 return curr_node
 
-            successor = curr_node.successor(queue_type=queue.LifoQueue())
-            while not successor.empty():
-                child_node = successor.get()
-                if self.check_explored_nodes:
-                    if child_node not in explored:
-                        frontier.put(child_node)
-                else:
-                    frontier.put(child_node)
+            if self.check_visited_nodes:
+                curr_state = curr_node.get_state()
+                if curr_state not in explored:
+                    explored.append(curr_state)
+                    successor = curr_node.successor()
+                    while not successor.empty():
+                        frontier.put(successor.get())
+            else:
+                successor = curr_node.successor()
+                while not successor.empty():
+                    node = successor.get()
+                    if str(node.state.state) not in visited.keys():
+                        frontier.put(node)
+                        visited[str(node.state.state)] = True
 
     def statistics(self) -> None:
         """
          If statistics printing is enabled, print the statistics. Otherwise, nothing is printed.
         """
         if self.running_stats is not None:
-            print(f"\n{33 * '>'}\n"
-                  f"Statistics for {self.running_stats.algorithm.upper()} with check for explored nodes"
-                  f" {'ENABLED' if self.check_explored_nodes else 'DISABLED'}", self.running_stats)
+            msg = f"\n{33 * '>'}\nStatistics for {self.running_stats.algorithm.upper()} with check for explored nodes" \
+                  f" {'ENABLED' if self.check_visited_nodes else 'DISABLED'} {self.running_stats}"
+            print(msg)
+            self.running_stats.save_to_file("assignment1_longho_mba.txt", msg)
