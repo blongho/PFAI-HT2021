@@ -66,7 +66,7 @@ class Node:
         """
         path = self.get_solution_path()
         for action in path:
-            print(f"action: {action[0]}")
+            print("action: ",action[0])
             if verbose:
                 print("----------------------------")
                 print(" #miss on left bank: ", action[1][0][0])
@@ -93,14 +93,12 @@ class SearchAlgorithm:
     def bfs(self, statistics=False):
         start_time = time.process_time() if statistics else None
         frontier = [self.start]
-        explored = []
+        explored = [self.start.state]
         stop = False
         while not stop:
             if len(frontier) == 0:
                 return None
             curr_node = frontier.pop(0)
-            if self.check_visited_nodes:
-                explored.append(curr_node)
             if curr_node.goal_state():
                 stop = True
                 if statistics:
@@ -115,22 +113,32 @@ class SearchAlgorithm:
             while not successor.empty():
                 child_node = successor.get()
                 if self.check_visited_nodes:
-                    if child_node not in explored:
+                    if child_node.state not in explored:
+                        explored.append(child_node.state)
                         frontier.append(child_node)
                 else:
                     frontier.append(child_node)
 
     def dfs(self, statistics=False):
+        """
+        Depth first search
+        Parameters
+        ----------
+        statistics whether or not this algorithm should print the statistics after reaching the goal state
+
+        Returns None or node with goal state
+        -------
+
+        """
         start_time = time.process_time() if statistics else None
         frontier = queue.Queue()
         frontier.put(self.start)
-        explored = []
+        explored = [self.start.state]
         stop = False
         while not stop:
             if frontier.empty():
                 return None
             curr_node = frontier.get()
-            explored.append(curr_node)
             if curr_node.goal_state():
                 stop = True
                 if statistics:
@@ -145,10 +153,20 @@ class SearchAlgorithm:
             while not successor.empty():
                 child_node = successor.get()
                 if self.check_visited_nodes:
-                    if child_node not in explored:
+                    if child_node.state not in explored:
+                        explored.append(child_node.state)
                         frontier.put(child_node)
                 else:
                     frontier.put(child_node)
+
+    def get_running_stats(self):
+        """
+        Get the running statistics for the search algorithm
+        Returns the instance of the running statistics
+        -------
+
+        """
+        return self.running_stats
 
     def statistics(self) -> None:
         """
@@ -158,4 +176,3 @@ class SearchAlgorithm:
             msg = f"\n{33 * '>'}\nStatistics for {self.running_stats.algorithm.upper()} with check for explored nodes" \
                   f" {'ENABLED' if self.check_visited_nodes else 'DISABLED'} {self.running_stats}"
             print(msg)
-            self.running_stats.save_to_file("assignment1_longho_mba.txt", msg)

@@ -2,7 +2,6 @@
 Utility functions for lab1
 __author__: "Bernard Longho <lobe2042@student.su.se>"
 """
-import sys
 
 
 class RunningStats:
@@ -44,39 +43,14 @@ class RunningStats:
                f"Estimated effective branching factor: {self.branching_factor}\n" \
                "--------------------------------\n"
 
-    def save_to_file(self, filename: str, msg:str) -> None:
-        """Save the statistics in a file 
 
-        Args:
-            filename (str): the file for saving the statistics into 
-            msg (str): Another message to add to file
-        """
-        with open(file=filename, mode="a") as file:
-            file.write(msg)
-            file.write(self.__str__())
+def save_content_to_file(filename: str, msg: str) -> None:
+    """Save something to file
 
-
-def get_configuration(args: list) -> {}:
-    arguments = {}
-    print("Arguments received are ", sys.argv)
-    for item in args:
-        if item.startswith("timer"):
-            timing_enabled = item.split("=")[1]
-            arguments["enable_timing"] = bool(timing_enabled)
-        if item.startswith("algo"):
-            algo = item.split("=")[1]
-            arguments["algo"] = algo
-        if item.startswith("save_to_file"):
-            saving_to_file = item.split("=")[1]
-            arguments["save_to_file"] = bool(saving_to_file)
-        if item.startswith("statistics"):
-            statistics = item.split("=")[1]
-            arguments["statistics"] = bool(statistics)
-        if item.startswith("check_visited_nodes"):
-            visited_check = item.split("=")[1]
-            arguments["check_visited_nodes"] = bool(visited_check)
-        if item.startswith("pretty_print"):
-            pretty_print = item.split("=")[1]
-            arguments["pretty_print"] = bool(pretty_print)
-        
-    return arguments
+    Args:
+       filename (str): the file for saving the statistics into
+      msg (str): Another message to add to file
+   """
+    with open(file=filename, mode="a") as file:
+        file.write(msg)
+    file.close()
