@@ -66,7 +66,7 @@ class Node:
         """
         path = self.get_solution_path()
         for action in path:
-            print("action: ",action[0])
+            print("action: ", action[0])
             if verbose:
                 print("----------------------------")
                 print(" #miss on left bank: ", action[1][0][0])
@@ -92,19 +92,21 @@ class SearchAlgorithm:
 
     def bfs(self, statistics=False):
         start_time = time.process_time() if statistics else None
-        frontier = [self.start]
+        frontier = queue.Queue()
+        frontier.put(self.start)
         explored = [self.start.state]
         stop = False
         while not stop:
-            if len(frontier) == 0:
+            if frontier.empty():
                 return None
-            curr_node = frontier.pop(0)
+            curr_node = frontier.get()
+            explored.append(curr_node.state)
             if curr_node.goal_state():
                 stop = True
                 if statistics:
                     stop_time = time.process_time()
                     cpu_time = stop_time - start_time
-                    nodes_explored = len(explored) if self.check_visited_nodes else len(frontier)
+                    nodes_explored = len(explored) if self.check_visited_nodes else frontier.qsize()
                     self.running_stats = RunningStats(algorithm="bfs", duration=cpu_time, depth=curr_node.depth,
                                                       nodes=nodes_explored, cost=curr_node.cost)
                 return curr_node
@@ -114,10 +116,10 @@ class SearchAlgorithm:
                 child_node = successor.get()
                 if self.check_visited_nodes:
                     if child_node.state not in explored:
-                        explored.append(child_node.state)
-                        frontier.append(child_node)
+                        frontier.put(child_node)
                 else:
-                    frontier.append(child_node)
+                    frontier.put(child_node)
+        return None
 
     def dfs(self, statistics=False):
         """
@@ -131,20 +133,20 @@ class SearchAlgorithm:
 
         """
         start_time = time.process_time() if statistics else None
-        frontier = queue.Queue()
-        frontier.put(self.start)
-        explored = [self.start.state]
+        frontier = [self.start]
+        explored = [self.start]
         stop = False
         while not stop:
-            if frontier.empty():
+            if len(frontier) == 0:
                 return None
-            curr_node = frontier.get()
+            curr_node = frontier.pop(0)
+            explored.append(curr_node.state)
             if curr_node.goal_state():
                 stop = True
                 if statistics:
                     stop_time = time.process_time()
                     cpu_time = stop_time - start_time
-                    nodes_explored = len(explored) if self.check_visited_nodes else frontier.qsize()
+                    nodes_explored = len(explored) if self.check_visited_nodes else len(frontier)
                     self.running_stats = RunningStats(algorithm="dfs", duration=cpu_time, depth=curr_node.depth,
                                                       nodes=nodes_explored, cost=curr_node.cost)
                 return curr_node
@@ -154,10 +156,10 @@ class SearchAlgorithm:
                 child_node = successor.get()
                 if self.check_visited_nodes:
                     if child_node.state not in explored:
-                        explored.append(child_node.state)
-                        frontier.put(child_node)
+                        frontier.append(child_node)
                 else:
-                    frontier.put(child_node)
+                    frontier.append(child_node)
+        return None
 
     def get_running_stats(self):
         """

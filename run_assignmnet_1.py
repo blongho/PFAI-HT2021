@@ -7,7 +7,7 @@ from missionaries_and_cannibals import MissionariesAndCannibals
 from node_and_search import SearchAlgorithm
 from utils import save_content_to_file as WriteToFile
 
-filename = "assignment_1_longho_mba.txt"
+filename = "Assignment1-Report+Longho_Bernard_Che_and_Mba_Godwin.md"
 init_state = [[0, 0], 'r', [3, 3]]
 goal_state = [[3, 3], 'l', [0, 0]]
 
@@ -48,7 +48,7 @@ def run_mm_cc(algorithm="bfs", print_stats=True, verbose_print=True, check_visit
         print("DFS")
         print('Start state: ')
         mc.pretty_print()
-        goal_node = sa.bfs(statistics=print_stats)
+        goal_node = sa.dfs(statistics=print_stats)
         goal_node.pretty_print_solution(verbose=verbose_print)
 
         print('goal state: ')
@@ -66,6 +66,8 @@ def run_mm_cc(algorithm="bfs", print_stats=True, verbose_print=True, check_visit
 def main():
     run_mm_cc(algorithm="bfs", print_stats=True, verbose_print=True, check_visited_nodes=True)
     run_mm_cc(algorithm="dfs", print_stats=True, verbose_print=True, check_visited_nodes=True)
+
+    # Not checking for explored nodes
     run_mm_cc(algorithm="bfs", print_stats=True, verbose_print=True, check_visited_nodes=False)
     run_mm_cc(algorithm="dfs", print_stats=True, verbose_print=True, check_visited_nodes=False)
 
