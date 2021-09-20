@@ -122,15 +122,13 @@ class SearchAlgorithm:
         return None
 
     def dfs(self, statistics=False):
-        """
-        Depth first search
-        Parameters
-        ----------
-        statistics whether or not this algorithm should print the statistics after reaching the goal state
+        """Depth first search - Uses LIFO (Last-In First Out)
 
-        Returns None or node with goal state
-        -------
+        Args:
+            statistics (bool, optional): whether or not this algorithm should print the statistics after reaching the goal state. Defaults to False.
 
+        Returns:
+            Any: goal node or None
         """
         start_time = time.process_time() if statistics else None
         frontier = [self.start]
@@ -161,12 +159,66 @@ class SearchAlgorithm:
                     frontier.append(child_node)
         return None
 
-    def get_running_stats(self):
-        """
-        Get the running statistics for the search algorithm
-        Returns the instance of the running statistics
-        -------
+    def dls(self, curr_node, limit):
+        """Depth Limited Search. Uses LIFO queue 
 
+        Args:
+            curr_node (Node): The current node
+            limit (int, optional): Search depth after which, the algorithm stops. Defaults to 50.
+        """
+        return self.recursive_dls(curr_node, limit)
+
+    def recursive_dls(self, curr_node, limit):
+        """Recursive Depth limited search
+
+        Args:
+            curr_node (Node): The current node
+            limit (int): The limit for which the search should stop
+
+        Returns:
+            Any: Goal node or failure or 'cutoff'
+        """
+        if curr_node.goal_state():
+            return curr_node
+        elif limit == 0:
+            return 'cutoff'
+        else:
+            cutoff_occurred = False
+            successor = curr_node.successor()
+            while not successor.empty():
+                result = self.recursive_dls(successor.get(), limit - 1)
+                if result == 'cutoff':
+                    cutoff_occurred = True
+                elif result is not None:
+                    return result
+            return 'cutoff' if cutoff_occurred else None
+
+    def ids(self, statistics=False, limit=50):
+        """Iterative Deepening search with depth_limit set to 50
+
+        Args:
+            statistics (bool, optional): Print statistics or not. Defaults to False.
+            limit (int, optional): The search depth limit. Defaults to 50.
+
+        Returns:
+            Any: Goal node or None or 'cutoff'
+        """
+        start_time = time.process_time() if statistics else None
+        for depth in range(limit):
+            result = self.dls(self.start, depth)
+            if result != 'cutoff':
+                if statistics:
+                    end_time = time.process_time()
+                    cpu_time = end_time - start_time
+                    self.running_stats = RunningStats(algorithm="ids", duration=cpu_time, depth=limit,
+                                                      nodes=limit, cost=limit)
+
+                return result
+
+    def get_running_stats(self):
+        """Get the running statistics for the search algorithm
+
+        Returns: `RunningStats` the instance of the running statistics
         """
         return self.running_stats
 
