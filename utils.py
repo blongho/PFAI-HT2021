@@ -2,6 +2,7 @@
 Utility functions for lab1
 __author__: "Bernard Longho <lobe2042@student.su.se>"
 """
+import sys
 
 
 class RunningStats:
@@ -55,8 +56,9 @@ class RunningStats:
             file.write(self.__str__())
 
 
-def get_configuration(args: list) -> dict():
+def get_configuration(args: list) -> {}:
     arguments = {}
+    print("Arguments received are ", sys.argv)
     for item in args:
         if item.startswith("timer"):
             timing_enabled = item.split("=")[1]

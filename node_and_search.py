@@ -77,7 +77,7 @@ class Node:
                 print("----------------------------")
 
     def __str__(self) -> str:
-        return "Node[state={}, cost={}, action={}, parent={}".format(self.state, self.cost, self.action, self.parent)
+        return "Node[state={}, cost={}, action={}".format(self.state, self.cost, self.action)
 
 
 class SearchAlgorithm:
@@ -91,16 +91,14 @@ class SearchAlgorithm:
         self.check_visited_nodes = check_visited_nodes
 
     def bfs(self, statistics=False):
-        print("Running bfs with statistics enabled? ", statistics)
         start_time = time.process_time() if statistics else None
-        frontier = queue.Queue()
-        frontier.put(self.start)
+        frontier = [self.start]
         explored = []
         stop = False
         while not stop:
-            if frontier.empty():
+            if len(frontier) == 0:
                 return None
-            curr_node = frontier.get()
+            curr_node = frontier.pop(0)
             if self.check_visited_nodes:
                 explored.append(curr_node)
             if curr_node.goal_state():
@@ -108,7 +106,7 @@ class SearchAlgorithm:
                 if statistics:
                     stop_time = time.process_time()
                     cpu_time = stop_time - start_time
-                    nodes_explored = len(explored) if self.check_visited_nodes else frontier.qsize()
+                    nodes_explored = len(explored) if self.check_visited_nodes else len(frontier)
                     self.running_stats = RunningStats(algorithm="bfs", duration=cpu_time, depth=curr_node.depth,
                                                       nodes=nodes_explored, cost=curr_node.cost)
                 return curr_node
@@ -118,14 +116,13 @@ class SearchAlgorithm:
                 child_node = successor.get()
                 if self.check_visited_nodes:
                     if child_node not in explored:
-                        frontier.put(child_node)
+                        frontier.append(child_node)
                 else:
-                    frontier.put(child_node)
+                    frontier.append(child_node)
 
     def dfs(self, statistics=False):
-        print("Running dfs with statistics enabled? ", statistics)
         start_time = time.process_time() if statistics else None
-        frontier = queue.LifoQueue()
+        frontier = queue.Queue()
         frontier.put(self.start)
         explored = []
         stop = False
