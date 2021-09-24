@@ -54,3 +54,17 @@ def save_content_to_file(filename: str, msg: str) -> None:
     with open(file=filename, mode="a") as file:
         file.write(msg)
     file.close()
+
+
+def flatten(nested_list: list):
+    """Flattens a list
+
+    Parameters
+    ----------
+    nested_list (list): A nested list
+
+    nested_list
+    -------
+
+    """
+    return [item for sub_list in nested_list for item in sub_list]
