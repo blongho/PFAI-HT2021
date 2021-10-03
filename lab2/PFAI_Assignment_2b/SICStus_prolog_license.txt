@@ -1,0 +1,47 @@
+To download SICStus Prolog release 4.6,
+please visit the following URL:
+
+       http://sicstus.sics.se/sicstus/products4/
+
+SICStus Prolog is distributed as a self-extracting executable
+(Windows) resp. a gzipped tar-file (UNIX).  
+
+Your license information for download 'darwin' is as follows:
+
+Site name:          studentSP4.6dsv.su.se
+License code:       b5d3-br6b-9grc-c6oo-kchk
+Expiration date:    permanent
+
+This information is entered either during installation or by modifying your
+license information after installation.  This is done by typing the following
+at a command prompt:
+
+> splm -i studentSP4.6dsv.su.se
+> splm -a sicstus4.6_darwin permanent b5d3-br6b-9grc-c6oo-kchk
+
+Your license information for download 'linux' is as follows:
+
+Site name:          studentSP4.6dsv.su.se
+License code:       2gg8-br6b-9grc-bx7z-hyz7
+Expiration date:    permanent
+
+This information is entered either during installation or by modifying your
+license information after installation.  This is done by typing the following
+at a command prompt:
+
+> splm -i studentSP4.6dsv.su.se
+> splm -a sicstus4.6_linux permanent 2gg8-br6b-9grc-bx7z-hyz7
+
+Your license information for download 'win32' is as follows:
+
+Site name:          studentSP4.6dsv.su.se
+License code:       befc-br6b-9grc-dbsa-czp5
+Expiration date:    permanent
+
+This information is entered either during installation or by modifying your
+license information after installation.  This is done
+from the 'Settings' menu item in the SICStus application (spwin.exe).
+
+By ordering, you confirm that you have read and agreed to the terms of the
+SICStus Prolog 4 license agreement applicable for your license; see:
+    http://sicstus.sics.se/license4-academic.html#EXHD
