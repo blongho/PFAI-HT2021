@@ -68,9 +68,6 @@ class EightPuzzle:
                     return idx, jdx
         return None
 
-    def _is_empty(self, position):
-        return self.state[position[0]][position[1]] == 'e'
-
     def _calculated_expected_goal_position(self, entry):
         for row in range(3):
             for col in range(3):
