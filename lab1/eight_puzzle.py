@@ -2,6 +2,8 @@
 Eight puzzle solver
 @author Bernard Longho, Mba Godwin
 """
+from copy import deepcopy
+
 import utils
 
 
@@ -18,6 +20,36 @@ class EightPuzzle:
 
     def check_goal(self):
         return self.state == self.goal
+
+    def move(self, move):
+        if move == "up":
+            dc = deepcopy(self)
+            if dc.up():
+                return dc
+        elif move == "down":
+            dc = deepcopy(self)
+            if dc.down():
+                return dc
+        elif move == "left":
+            dc = deepcopy(self)
+            if dc.left():
+                return dc
+        elif move == "right":
+            dc = deepcopy(self)
+            if dc.right():
+                return dc
+
+    def up(self):
+        pass
+
+    def down(self):
+        pass
+
+    def left(self):
+        pass
+
+    def right(self):
+        pass
 
     def h_1(self):
         """Heuristics that calculates the number of tiles out of place
@@ -84,3 +116,4 @@ class EightPuzzle:
             print(delim, self.state[idx][0], delim, self.state[idx][1], delim,
                   self.state[idx][2], delim)
         print("-" * 13)
+
