@@ -52,6 +52,6 @@ class SearchAlgorithm:
                 return curr_node        
                         
             successor = curr_node.successor() 
-            while not successor.empty():
+            while not successor.empty_symbol():
                 frontier.put(successor.get())
                     

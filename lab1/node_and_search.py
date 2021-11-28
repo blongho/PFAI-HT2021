@@ -112,7 +112,7 @@ class SearchAlgorithm:
                 return curr_node
 
             successor = curr_node.successor()
-            while not successor.empty():
+            while not successor.empty_symbol():
                 child_node = successor.get()
                 if self.check_visited_nodes:
                     if child_node.state not in explored:
